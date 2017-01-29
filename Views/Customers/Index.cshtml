@@ -1,0 +1,187 @@
+﻿@model IEnumerable<ApplicationTest.Models.Customer>
+
+@{
+    ViewBag.Title = "Index";
+    var user = (ApplicationTest.Models.UserSys)(Session["user"]);
+}
+
+<h2>Index</h2>
+
+@{
+
+    if (user != null)
+    {
+        <h4>Usuário Logado: @user.Login</h4>
+    }
+
+}
+
+
+<div class="row">
+    <!-- Logged User -->
+    <div class="col-md-8">
+        @using (Html.BeginForm("Index", "Customers", FormMethod.Get, new { @class = "form-horizontal" }))
+        {
+
+            <div class="form-group">
+                @Html.Label("Name", new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.TextBox("searchName", ViewBag.FilterName as string, new { @class = "form-control" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.Label("Gender", new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.DropDownList("searchGender", (SelectList)ViewBag.ComboGender, "All", new { id = "ddlGender", @class = "form-control" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.Label("City", new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.DropDownList("searchCity", (SelectList)ViewBag.ComboCity, "All", new { id = "ddlCity", @class = "form-control" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.Label("Region", new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.DropDownList("searchRegion", (SelectList)ViewBag.ComboRegion, "All", new { id = "ddlRegion", @class = "form-control" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.Label("Classification", new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.DropDownList("searchClassification", (SelectList)ViewBag.ComboClassification, "All", new { id = "ddlClassification", @class = "form-control" })
+                </div>
+            </div>
+
+            if (@user.Login == "Administrator")
+            {
+                <div class="form-group">
+                    @Html.Label("Seller", new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        @Html.DropDownList("searchSeller", (SelectList)ViewBag.ComboSeller, "All", new { id = "ddlSeller", @class = "form-control" })
+                    </div>
+                </div>
+            }
+
+            <div class="form-group">
+                @Html.Label("Last Purchase", new { @class = "col-md-2 control-label" })
+                <div class="span5 col-md-5" id="sandbox-container">
+                    <div class="input-daterange input-group" id="datepicker">
+                        @Html.TextBox("searchStartDate", ViewBag.FilterStartDate as string, new { @class = "datetimepck input-sm form-control" })
+                        <span class="input-group-addon">UNTIL</span>
+                        @Html.TextBox("searchEndDate", ViewBag.FilterEndDate as string, new { @class = "datetimepck input-sm form-control" })
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Search" class="btn btn-default" />
+                    <input type="button" value="Clear Fields" class="btn btn-default" onclick="ClearFields()" />
+                </div>
+            </div>
+        }
+
+    </div>
+</div>
+
+
+@*<p>
+    @Html.ActionLink("Create New", "Create")
+</p>*@
+<table class="table">
+    <tr>
+        <th>
+            @Html.ActionLink("Name", "Index", new { sortOrder = ViewBag.ParamName })
+        </th>
+        <th>
+            @Html.ActionLink("Phone", "Index", new { sortOrder = ViewBag.ParamPhone })
+        </th>
+        <th>
+            @Html.ActionLink("Gender", "Index", new { sortOrder = ViewBag.ParamGenderId })
+        </th>
+        <th>
+            @Html.ActionLink("City", "Index", new { sortOrder = ViewBag.ParamCityId })
+        </th>
+        <th>
+            @Html.ActionLink("Region", "Index", new { sortOrder = ViewBag.ParamRegionId })
+        </th>
+        <th>
+            @Html.ActionLink("LastPurchase", "Index", new { sortOrder = ViewBag.ParamLastPurchase })
+        </th>
+        <th>
+            @Html.ActionLink("Classification", "Index", new { sortOrder = ViewBag.ParamClassificationId })
+        </th>
+        <th>
+            @Html.ActionLink("User", "Index", new { sortOrder = ViewBag.ParamUserId })
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Phone)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Gender.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.City.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Region.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.LastPurchase)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Classification.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.User.Login)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
+            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+        </td>
+    </tr>
+}
+
+</table>
+
+
+<script type="text/javascript">
+
+    flatpickr(".datetimepck");
+
+    function ClearFields() {
+        $("#searchName").val("");
+        SetValueDropDownList("#ddlGender", "");
+        SetValueDropDownList("#ddlCity", "");
+        SetValueDropDownList("#ddlRegion", "");
+        SetValueDropDownList("#ddlClassification", "");
+        SetValueDropDownList("#ddlSeller", "");
+
+        $("#searchStartDate").val("");
+        $("#searchEndDate").val("");
+
+        $("#searchName").focus();
+    }
+
+    function SetValueDropDownList(selectName, valueSelect) {
+        if ((valueSelect != null) && (valueSelect != undefined)) {
+            $(selectName).val(valueSelect);
+        }
+    }
+</script>
